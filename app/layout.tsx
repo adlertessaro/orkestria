@@ -14,16 +14,15 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Dashboard Operacional',
+  title: 'Dashboard - Adler',
   description: 'Sistema web moderno com dashboard de KPIs, integrações de APIs e análises avançadas.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="font-sans antialiased" suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+      <body className="font-sans antialiased">
         {children}
-        {/* O Toaster fica aqui no final para renderizar as notificações em qualquer parte do sistema */}
         <Toaster richColors position="top-right" />
       </body>
     </html>

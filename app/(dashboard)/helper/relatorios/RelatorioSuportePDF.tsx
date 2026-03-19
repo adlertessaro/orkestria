@@ -62,7 +62,7 @@ export const RelatorioSuportePDF = ({ dados, filtros }: { dados: any[], filtros:
       <View style={styles.filterBox}>
         <Text style={styles.filterTitle}>Filtros da Busca:</Text>
         <Text style={styles.filterText}>
-            Período: {filtros.dataInicio ? filtros.dataInicio.split('-').reverse().join('/') : 'Início'} 
+            Período: {filtros.dataInicio ? filtros.dataInicio.split('-').reverse().join('/') : 'Início '} 
             até {filtros.dataFim ? filtros.dataFim.split('-').reverse().join('/') : 'Hoje'} | 
             Helper: {filtros.helperId || "Todos"} | 
             Status: {filtros.status || "Todos"}

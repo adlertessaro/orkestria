@@ -1,35 +1,17 @@
-// app/api/cron/sync-trello/route.ts
-import { NextResponse } from "next/server"
-import { trelloSyncEngine } from "@/lib/trello_service"
-import { supabaseAdmin } from "@/lib/supabase/supabase"
+// esse arquivo é apenas para rodar localemnte. Ele não é importado por nenhum outro lugar, então pode conter código de teste, cron jobs, ou o que for necessário para desenvolvimento local.
+// Para rodar em deploy devemos inserir um cron no https://console.cron-job.org/ usando o arquivo pré fabricado app\(dashboard)\apis\cron\sync-trello\route.ts
+import cron from 'node-cron';
+import { sincronizarTrelloAction } from "@/app/(dashboard)/helper/relatorios/actions";
 
-export async function GET(request: Request) {
-  // Verificação de segurança: Só permite se o Header de autorização bater
-  // Isso evita que curiosos fiquem rodando sua sync toda hora
-  const authHeader = request.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return new Response('Não autorizado, amigão!', { status: 401 })
-  }
+console.log("👷 Worker Local Iniciado...");
 
+// '*/15 * * * *' significa: a cada 15 minutos
+cron.schedule('*/15 * * * *', async () => {
+  console.log(`⏰ [${new Date().toLocaleTimeString()}] Iniciando ciclo automático...`);
   try {
-    const count = await trelloSyncEngine()
-    
-    // Logamos o sucesso no seu banco de telemetria
-    await supabaseAdmin.from("trello_helper_sync_logs").insert({
-      service_name: "Trello-Automated",
-      status: "Sucesso",
-      items_processed: count
-    })
-
-    return NextResponse.json({ success: true, processed: count })
-  } catch (error: any) {
-    // Logamos o erro para você saber por que a "máquina" parou
-    await supabaseAdmin.from("trello_helper_sync_logs").insert({
-      service_name: "Trello-Automated",
-      status: "Erro",
-      error_message: error.message
-    })
-    
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+    await sincronizarTrelloAction({});
+    console.log("✅ Ciclo finalizado com sucesso.");
+  } catch (err) {
+    console.error("❌ Erro no ciclo automático:", err);
   }
-}
+});

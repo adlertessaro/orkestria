@@ -9,7 +9,10 @@ export async function getCardsPaginados(page: number, search: string = "", statu
 
   let query = supabaseAdmin
     .from("trello_cards")
-    .select("*", { count: 'exact' })
+    .select(`
+      *,
+      membros:trello_card_members(name_member)
+    `, { count: 'exact' })
 
   if (search) {
     query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`)
@@ -21,11 +24,12 @@ export async function getCardsPaginados(page: number, search: string = "", statu
 
   const { data, count, error } = await query
     .order("ultima_atualizacao", { ascending: false })
+    .order("id_trello", { ascending: true })
     .range(from, to)
 
   if (error) throw error
-  return { cards: data || [], hasMore: count ? (to < count - 1) : false }
-}
+    return { cards: data || [], hasMore: count ? (to < count - 1) : false, totalCount: count || 0 }
+  }
 
 /**
  * BUSCA DETALHES DO BANCO (Membros e Comentários)

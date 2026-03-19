@@ -41,7 +41,8 @@ export default function ImendesV3Page() {
 
   return (
     <div className="p-6 space-y-6 bg-background min-h-screen">
-      <h1 className="text-3xl font-bold text-zinc-800">Consulta de Tributação Imendes</h1>
+      <h1 className="text-xl font-bold text-zinc-800">Consulta de Tributação Imendes</h1>
+      <h3 className="text-xs text-zinc-400 mt-0.5">Consultar integração Imendes v3</h3>
 
       {/* 1. FORMULÁRIO DE ENTRADA */}
       <Card className="shadow-sm border-zinc-200">

@@ -13,10 +13,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { BarChart3, FileSpreadsheet } from "lucide-react"
+import { BarChart3, FileSpreadsheet, FileText, Table } from "lucide-react"
 import { saveAs } from "file-saver"
 import { RelatorioSuportePDF } from "./RelatorioSuportePDF"
 import { pdf } from "@react-pdf/renderer"
+import * as XLSX from "xlsx"
 import { toast } from "sonner"
 
 interface RelatorioModalProps {
@@ -25,6 +26,28 @@ interface RelatorioModalProps {
 
 export function RelatorioModal({ onGerar }: RelatorioModalProps) {
   const [loading, setLoading] = React.useState(false)
+
+  const exportToExcel = (dados: any[], filtros: any) => {
+    // Mapeamos os dados para que o cabeçalho do Excel fique bonito e legível
+    const dadosFormatados = dados.map(item => ({
+      "Status": item.Status,
+      "Título": item.Titulo,
+      "Cliente": item.Cliente,
+      "Tipo de Ajuda": item.TipoAjuda,
+      "Solicitante": item.Solicitante,
+      "Data Solicitação": item.DataSolicitacao,
+      "Última Atualização": item.UltAtualizacao
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dadosFormatados);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Relatório");
+    
+    // Gera o buffer e salva
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const data = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    saveAs(data, `relatorio-suporte-${new Date().getTime()}.xlsx`);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
@@ -46,6 +69,7 @@ export function RelatorioModal({ onGerar }: RelatorioModalProps) {
     const doc = <RelatorioSuportePDF dados={dados} filtros={filtros} />;
     const blob = await pdf(doc).toBlob();
     saveAs(blob, `relatorio-suporte.pdf`);
+    exportToExcel(dados, filtros);
     toast.success(`${dados.length} registros exportados!`);
   } else {
     toast.error("A busca não retornou dados. Verifique os filtros ou se há cards sincronizados.");
@@ -80,6 +104,28 @@ export function RelatorioModal({ onGerar }: RelatorioModalProps) {
                 <Label htmlFor="dataFim">Data Fim</Label>
                 <Input id="dataFim" name="dataFim" type="date" required />
             </div>
+            </div>
+
+            {/* NOVO CAMPO: SELETOR DE FORMATO */}
+            <div className="space-y-2">
+              <Label>Formato do Arquivo</Label>
+              <Select name="formato" defaultValue="pdf">
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pdf">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-red-500" /> Documento PDF (.pdf)
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="xlsx">
+                    <div className="flex items-center gap-2">
+                      <Table className="w-4 h-4 text-green-600" /> Planilha Excel (.xlsx)
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
           <div className="space-y-2">

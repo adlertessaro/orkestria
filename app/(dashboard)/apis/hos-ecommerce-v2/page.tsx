@@ -109,8 +109,8 @@ export default function HosEcommercePage() {
   return (
     <div className="p-6 space-y-6 bg-background min-h-screen">
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-bold text-foreground">HOS E-Commerce 2.0</h1>
-        <h3 className="text-sm text-muted-foreground">Gerencie as integrações e-commerce vinculadas às empresas</h3>
+        <h1 className="text-xl font-bold text-zinc-800">HOS E-Commerce 2.0</h1>
+        <h3 className="text-xs text-zinc-400 mt-0.5">Gerenciar integração e-commerce HOS</h3>
       </div>
 
       {/* LÓGICA DE RESET: onValueChange limpa o resultado ao trocar de aba */}

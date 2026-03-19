@@ -38,16 +38,15 @@ export async function updateSession(request: NextRequest) {
   // 3. LÓGICA DE REDIRECIONAMENTO (O "Guarda")
   
   // REGRA A: Se não está logado e tenta entrar no sistema (ex: dashboard ou cadastro de usuários)
-  if (!user && !url.pathname.startsWith('/login') && !url.pathname.startsWith('/auth')) {
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
-  }
-
-  // REGRA B: Se JÁ está logado e tenta ir para a página de login
-  if (user && url.pathname.startsWith('/login')) {
-    url.pathname = '/' // Ou para onde você quer que o usuário vá ao logar (ex: /analises-avancadas)
-    return NextResponse.redirect(url)
-  }
+  if (
+      !user && 
+      !url.pathname.startsWith('/login') && 
+      !url.pathname.startsWith('/auth') &&
+      !url.pathname.startsWith('/api')
+    ) {
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
 
   return supabaseResponse
 }

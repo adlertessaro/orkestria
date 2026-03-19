@@ -1,0 +1,1 @@
+O agente do Helper, existe apenas para entender a intenção do usuário e, a partir de regras, definir o melhor membro a ser inserido no card
